@@ -5,6 +5,7 @@ import com.example.telegram_bot.service.ReplyMessagesService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -17,7 +18,7 @@ public class TelegramFacade {
 	private final UserDataCache userDataCache;
 	private final ReplyMessagesService replyMessagesService;
 
-	public SendMessage handleUpdate(Update update) {
+	public BotApiMethod<?> handleUpdate(Update update) {
 		Message message = update.getMessage();
 		if (message == null) {
 			log.error("Get update without message.");

@@ -15,4 +15,15 @@ public class UserProfileData {
 	String song;
 	int age;
 	int number;
+
+	@Override
+	public String toString() {
+		return    "Имя = '" + name + '\'' +
+				", Пол = '" + gender + '\'' +
+				", Цвет = '" + color + '\'' +
+				", Фильм = '" + movie + '\'' +
+				", Песня = '" + song + '\'' +
+				", Возвраст = " + age +
+				", Номер = " + number;
+	}
 }

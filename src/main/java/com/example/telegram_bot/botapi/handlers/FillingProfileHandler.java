@@ -58,9 +58,14 @@ public class FillingProfileHandler implements InputMessageHandler {
         }
 
         if (botState.equals(BotState.ASK_GENDER)) {
-            replyToUser = messagesService.getReplyMessage(chatId, "reply.askGender");
-            profileData.setAge(Integer.parseInt(usersAnswer));
-            userDataCache.setUsersCurrentBotState(userId, BotState.ASK_NUMBER);
+            try {
+                profileData.setAge(Integer.parseInt(usersAnswer));
+                replyToUser = messagesService.getReplyMessage(chatId, "reply.askGender");
+                userDataCache.setUsersCurrentBotState(userId, BotState.ASK_NUMBER);
+            } catch (NumberFormatException e) {
+                log.error("Ожидалось число, но ввели не число");
+                replyToUser = messagesService.getReplyMessage(chatId, "error.notInt");
+            }
         }
 
         if (botState.equals(BotState.ASK_NUMBER)) {
@@ -70,9 +75,14 @@ public class FillingProfileHandler implements InputMessageHandler {
         }
 
         if (botState.equals(BotState.ASK_COLOR)) {
-            replyToUser = messagesService.getReplyMessage(chatId, "reply.askColor");
-            profileData.setNumber(Integer.parseInt(usersAnswer));
-            userDataCache.setUsersCurrentBotState(userId, BotState.ASK_MOVIE);
+            try {
+                replyToUser = messagesService.getReplyMessage(chatId, "reply.askColor");
+                profileData.setNumber(Integer.parseInt(usersAnswer));
+                userDataCache.setUsersCurrentBotState(userId, BotState.ASK_MOVIE);
+            } catch (NumberFormatException e) {
+                log.error("Ожидалось число, но ввели не число");
+                replyToUser = messagesService.getReplyMessage(chatId, "error.notInt");
+            }
         }
 
         if (botState.equals(BotState.ASK_MOVIE)) {
