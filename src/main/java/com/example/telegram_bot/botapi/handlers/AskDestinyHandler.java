@@ -29,7 +29,7 @@ public class AskDestinyHandler implements InputMessageHandler {
 	}
 
 	private SendMessage processUsersInput(Message inputMsg) {
-		long userId = inputMsg.getFrom().getId();
+		String userId = inputMsg.getFrom().getId().toString();
 		long chatId = inputMsg.getChatId();
 
 		SendMessage replyToUser = messagesService.getReplyMessage(String.valueOf(chatId), "reply.askDestiny");

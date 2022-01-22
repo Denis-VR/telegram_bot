@@ -1,7 +1,8 @@
 package com.example.telegram_bot.botapi;
 
 public enum BotState {
-	ASK_DESTINY,
+
+	//FillingProfileHandler
 	ASK_NAME,
 	ASK_AGE,
 	ASK_GENDER,
@@ -11,6 +12,10 @@ public enum BotState {
 	ASK_SONG,
 	FILLING_PROFILE,
 	PROFILE_FILLED,
+
+	//AskDestinyHandler
+	ASK_DESTINY,
+
 	SHOW_MAIN_MENU,
 	SHOW_HELP_MENU;
 }

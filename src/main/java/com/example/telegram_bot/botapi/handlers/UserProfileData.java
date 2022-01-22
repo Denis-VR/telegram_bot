@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserProfileData {
+
 	String name;
 	String gender;
 	String color;

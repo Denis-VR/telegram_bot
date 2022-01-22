@@ -8,17 +8,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
+//todo add noSql (redis/mongodb)
 public class UserDataCache implements DataCache {
-	private Map<Long, BotState> userBotStates = new HashMap<>();
-	private Map<Long, UserProfileData> usersProfileData = new HashMap<>();
+	private final Map<String, BotState> userBotStates = new HashMap<>();
+	private final Map<String, UserProfileData> usersProfileData = new HashMap<>();
 
 	@Override
-	public void setUsersCurrentBotState(Long userId, BotState botState) {
+	public void setUsersCurrentBotState(String userId, BotState botState) {
 		userBotStates.put(userId, botState);
 	}
 
 	@Override
-	public BotState getUsersCurrentBotState(Long userId) {
+	public BotState getUsersCurrentBotState(String userId) {
 		BotState botState = userBotStates.get(userId);
 		if (botState == null) {
 			botState = BotState.ASK_DESTINY;
@@ -27,11 +28,16 @@ public class UserDataCache implements DataCache {
 	}
 
 	@Override
-	public UserProfileData getUserProfileData(Long userId) {
+	public UserProfileData getUserProfileData(String userId) {
 		UserProfileData userProfileData = usersProfileData.get(userId);
 		if (userProfileData == null) {
 			userProfileData = new UserProfileData();
 		}
 		return userProfileData;
+	}
+
+	@Override
+	public void saveUserProfileData(String userId, UserProfileData userProfileData) {
+		usersProfileData.put(userId, userProfileData);
 	}
 }

@@ -5,9 +5,11 @@ import com.example.telegram_bot.botapi.handlers.UserProfileData;
 
 public interface DataCache {
 
-	void setUsersCurrentBotState(Long userId, BotState botState);
+	void setUsersCurrentBotState(String userId, BotState botState);
 
-	BotState getUsersCurrentBotState(Long userId);
+	BotState getUsersCurrentBotState(String userId);
 
-	UserProfileData getUserProfileData(Long userId);
+	UserProfileData getUserProfileData(String userId);
+
+	void saveUserProfileData(String userId, UserProfileData userProfileData);
 }
