@@ -9,10 +9,11 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @RestController
 @RequiredArgsConstructor
 public class WebHookController {
-	private final MyTelegramBot telegramBot;
+    private final MyTelegramBot telegramBot;
 
-	@PostMapping("/")
-	public BotApiMethod<?> cnUpdateReceived(@RequestBody Update update) {
-		return telegramBot.onWebhookUpdateReceived(update);
-	}
+    @PostMapping("/")
+    public BotApiMethod<?> cnUpdateReceived(@RequestBody Update update) {
+        return telegramBot.onWebhookUpdateReceived(update);
+    }
+
 }

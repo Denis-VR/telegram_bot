@@ -1,4 +1,4 @@
-package com.example.telegram_bot.botapi.handlers;
+package com.example.telegram_bot.botapi.handlers.fillingprofile;
 
 import com.example.telegram_bot.botapi.BotState;
 import com.example.telegram_bot.botapi.InputMessageHandler;
@@ -8,6 +8,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+
+import java.util.List;
+
+import static com.example.telegram_bot.utils.KeyboardBuilder.buildButton;
+import static com.example.telegram_bot.utils.KeyboardBuilder.buildKeyboardButtonRow;
+import static com.example.telegram_bot.utils.KeyboardBuilder.buildRowList;
 
 @Slf4j
 @Component
@@ -54,7 +62,8 @@ public class FillingProfileHandler implements InputMessageHandler {
         if (botState.equals(BotState.ASK_AGE)) {
             profileData.setName(usersAnswer);
             replyToUser = messagesService.getReplyMessage(chatId, "reply.askAge");
-            userDataCache.setUsersCurrentBotState(userId, BotState.ASK_GENDER);
+            //userDataCache.setUsersCurrentBotState(userId, BotState.ASK_GENDER);
+            replyToUser.setReplyMarkup(getGenderButtonsMarkup());
         }
 
         if (botState.equals(BotState.ASK_GENDER)) {
@@ -108,5 +117,17 @@ public class FillingProfileHandler implements InputMessageHandler {
         return replyToUser;
     }
 
+    private InlineKeyboardMarkup getGenderButtonsMarkup() {
+        InlineKeyboardMarkup inlineMarkup = new InlineKeyboardMarkup();
+        //todo сделать перевод для языков
+        InlineKeyboardButton buttonMan = buildButton("М", "buttonMan");
+        InlineKeyboardButton buttonWoman = buildButton("Ж", "buttonWoman");
 
+        List<InlineKeyboardButton> keyboardButtonRow1 = buildKeyboardButtonRow(buttonMan, buttonWoman);
+
+        List<List<InlineKeyboardButton>> rowList = buildRowList(keyboardButtonRow1);
+
+        inlineMarkup.setKeyboard(rowList);
+        return inlineMarkup;
+    }
 }

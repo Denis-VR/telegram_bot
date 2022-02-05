@@ -2,20 +2,22 @@ package com.example.telegram_bot.botapi;
 
 public enum BotState {
 
-	//FillingProfileHandler
-	ASK_NAME,
-	ASK_AGE,
-	ASK_GENDER,
-	ASK_COLOR,
-	ASK_NUMBER,
-	ASK_MOVIE,
-	ASK_SONG,
-	FILLING_PROFILE,
-	PROFILE_FILLED,
+    //fillingprofile
+    ASK_NAME,
+    ASK_AGE,
+    ASK_GENDER,
+    ASK_COLOR,
+    ASK_NUMBER,
+    ASK_MOVIE,
+    ASK_SONG,
+    FILLING_PROFILE,
+    PROFILE_FILLED,
 
-	//AskDestinyHandler
-	ASK_DESTINY,
+    //askdestiny
+    ASK_DESTINY,
 
-	SHOW_MAIN_MENU,
-	SHOW_HELP_MENU;
+    //menu
+    SHOW_USER_PROFILE,
+    SHOW_MAIN_MENU,
+    SHOW_HELP_MENU;
 }
