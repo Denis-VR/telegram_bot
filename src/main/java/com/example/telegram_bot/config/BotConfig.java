@@ -48,7 +48,7 @@ public class BotConfig {
 	}
 
 	public void setWebHook() {
-		String url = "https://api.telegram.org/bot1866938538:AAFcp-Zlz3obNiZM6q-WlHsMsC6hCS_78Xc/setWebhook?url=" + webHookPath;
+		String url = "https://api.telegram.org/bot" + botToken + "/setWebhook?url=" + webHookPath;
 		ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 		log.info("WebHook is set with result: {}", response.getStatusCode());
 	}
