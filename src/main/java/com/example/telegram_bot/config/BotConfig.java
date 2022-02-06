@@ -23,33 +23,33 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class BotConfig {
 
-    private final RestTemplate restTemplate;
+	private final RestTemplate restTemplate;
 
-    private String webHookPath;
-    private String botUsername;
-    private String botToken;
+	private String webHookPath;
+	private String botUsername;
+	private String botToken;
 
-    @Bean
-    public MyTelegramBot myTelegramBot(TelegramFacade telegramFacade) {
-        setWebHook();
-        MyTelegramBot myTelegramBot = new MyTelegramBot(telegramFacade);
-        myTelegramBot.setWebHookPath(webHookPath);
-        myTelegramBot.setBotUsername(botUsername);
-        myTelegramBot.setBotToken(botToken);
-        return myTelegramBot;
-    }
+	@Bean
+	public MyTelegramBot myTelegramBot(TelegramFacade telegramFacade) {
+		setWebHook();
+		MyTelegramBot myTelegramBot = new MyTelegramBot(telegramFacade);
+		myTelegramBot.setWebHookPath(webHookPath);
+		myTelegramBot.setBotUsername(botUsername);
+		myTelegramBot.setBotToken(botToken);
+		return myTelegramBot;
+	}
 
-    @Bean
-    public MessageSource messageSource() {
-        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.setBasename("classpath:messages");
-        messageSource.setDefaultEncoding("UTF-8");
-        return messageSource;
-    }
+	@Bean
+	public MessageSource messageSource() {
+		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+		messageSource.setBasename("classpath:messages");
+		messageSource.setDefaultEncoding("UTF-8");
+		return messageSource;
+	}
 
-    public void setWebHook() {
-        String url = "https://api.telegram.org/bot1866938538:AAFcp-Zlz3obNiZM6q-WlHsMsC6hCS_78Xc/setWebhook?url=" + webHookPath;
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-        log.info("WebHook is set with result: {}", response.getStatusCode());
-    }
+	public void setWebHook() {
+		String url = "https://api.telegram.org/bot1866938538:AAFcp-Zlz3obNiZM6q-WlHsMsC6hCS_78Xc/setWebhook?url=" + webHookPath;
+		ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+		log.info("WebHook is set with result: {}", response.getStatusCode());
+	}
 }
