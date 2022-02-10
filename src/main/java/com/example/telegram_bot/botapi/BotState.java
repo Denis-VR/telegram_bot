@@ -30,4 +30,4 @@ public enum BotState {
 	//errors
 	NOT_SUPPORT,
 	NOT_ASK
-	}
+}
