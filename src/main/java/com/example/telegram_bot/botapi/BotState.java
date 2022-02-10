@@ -18,6 +18,7 @@ public enum BotState {
 	FILLING_PROFILE_CALLBACK,
 	GENDER_M,
 	GENDER_W,
+	//ASK_NAME
 
 	//askdestiny
 	ASK_DESTINY,

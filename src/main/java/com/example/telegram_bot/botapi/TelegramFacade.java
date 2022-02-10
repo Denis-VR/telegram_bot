@@ -19,7 +19,6 @@ public class TelegramFacade {
 
 	public BotApiMethod<?> handleUpdate(Update update) {
 		if (update.hasCallbackQuery()) {
-			log.info("New CallbackQuery from User: {}", update.getCallbackQuery());
 			return processCallbackQuery(update);
 		}
 		if (update.hasMessage()) {
@@ -50,6 +49,7 @@ public class TelegramFacade {
 
 	private BotApiMethod<?> processCallbackQuery(Update update) {
 		String userId = update.getCallbackQuery().getFrom().getId().toString();
+		log.info("New CallbackQuery from User: {}, userId:{}", update.getCallbackQuery().getFrom().getUserName(), userId);
 		BotState botState = getBotStateCallbackQueryData(update.getCallbackQuery().getData());
 		userDataCache.setUsersCurrentBotState(userId, botState);
 		return botStateContext.processInputTextMessage(botState, update);
