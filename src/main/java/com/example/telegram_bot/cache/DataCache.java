@@ -9,6 +9,10 @@ public interface DataCache {
 
 	BotState getUsersCurrentBotState(String userId);
 
+	BotState getUsersCurrentBotStateForMessage(String userId);
+
+	BotState getUsersCurrentBotStateForCallback(String userId);
+
 	UserProfileData getUserProfileData(String userId);
 
 	void saveUserProfileData(String userId, UserProfileData userProfileData);

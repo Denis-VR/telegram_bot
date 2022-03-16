@@ -1,9 +1,10 @@
 package com.example.telegram_bot.botapi;
 
+import com.example.telegram_bot.MyTelegramBot;
 import com.example.telegram_bot.cache.UserDataCache;
 import com.example.telegram_bot.service.ReplyMessagesService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -11,11 +12,19 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public class TelegramFacade {
 	private final BotStateContext botStateContext;
 	private final UserDataCache userDataCache;
 	private final ReplyMessagesService replyMessagesService;
+	private final MyTelegramBot myTelegramBot;
+
+	public TelegramFacade(BotStateContext botStateContext, UserDataCache userDataCache,
+						  ReplyMessagesService replyMessagesService, @Lazy MyTelegramBot myTelegramBot) {
+		this.botStateContext = botStateContext;
+		this.userDataCache = userDataCache;
+		this.replyMessagesService = replyMessagesService;
+		this.myTelegramBot = myTelegramBot;
+	}
 
 	public BotApiMethod<?> handleUpdate(Update update) {
 		if (update.hasCallbackQuery()) {
@@ -42,24 +51,29 @@ public class TelegramFacade {
 
 	private BotApiMethod<?> processMessage(Update update) {
 		String userId = update.getMessage().getFrom().getId().toString();
-		BotState botState = getBotStateTextMessage(update.getMessage().getText(), userId);
-		userDataCache.setUsersCurrentBotState(userId, botState);
+		BotState botState = getBotStateTextMessage(update.getMessage().getText(), userId, update.getMessage().getChatId().toString());
+		if (!botState.equals(BotState.IS_CALLBACK_QUERY)) {
+			userDataCache.setUsersCurrentBotState(userId, botState);
+		}
 		return botStateContext.processInputTextMessage(botState, update);
 	}
 
 	private BotApiMethod<?> processCallbackQuery(Update update) {
 		String userId = update.getCallbackQuery().getFrom().getId().toString();
 		log.info("New CallbackQuery from User: {}, userId:{}", update.getCallbackQuery().getFrom().getUserName(), userId);
-		BotState botState = getBotStateCallbackQueryData(update.getCallbackQuery().getData());
-		userDataCache.setUsersCurrentBotState(userId, botState);
+		BotState botState = getBotStateCallbackQueryData(update.getCallbackQuery().getData(), userId);
+		if (!botState.equals(BotState.IS_MESSAGE) && !botState.equals(BotState.NOT_SUPPORT)) {
+			userDataCache.setUsersCurrentBotState(userId, botState);
+		}
 		return botStateContext.processInputTextMessage(botState, update);
 	}
 
-	private BotState getBotStateTextMessage(String textMessage, String userId) {
+	private BotState getBotStateTextMessage(String textMessage, String userId, String chatId) {
 		BotState botState;
 		switch (textMessage) {
 			case "/start":
 				botState = BotState.ASK_DESTINY;
+				myTelegramBot.sendPhoto(chatId, replyMessagesService.getReplyText("reply.hello"), "static/images/logo.jpg");
 				break;
 			case "Получить предсказание":
 				botState = BotState.FILLING_PROFILE;
@@ -71,12 +85,12 @@ public class TelegramFacade {
 				botState = BotState.SHOW_HELP_MENU;
 				break;
 			default:
-				botState = userDataCache.getUsersCurrentBotState(userId);
+				botState = userDataCache.getUsersCurrentBotStateForMessage(userId);
 		}
 		return botState;
 	}
 
-	private BotState getBotStateCallbackQueryData(String data) {
+	private BotState getBotStateCallbackQueryData(String data, String userId) {
 		BotState botState;
 		switch (data) {
 			case "buttonYes":
@@ -98,7 +112,7 @@ public class TelegramFacade {
 				botState = BotState.SHOW_MAIN_MENU;
 				break;
 			default:
-				botState = BotState.SHOW_MAIN_MENU;
+				botState = userDataCache.getUsersCurrentBotStateForCallback(userId);
 		}
 		return botState;
 	}
