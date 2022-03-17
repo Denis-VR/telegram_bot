@@ -4,6 +4,7 @@ import com.example.telegram_bot.botapi.BotState;
 import com.example.telegram_bot.botapi.InputHandler;
 import com.example.telegram_bot.service.MainMenuService;
 import com.example.telegram_bot.service.ReplyMessagesService;
+import com.example.telegram_bot.utils.Emojis;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -24,7 +25,7 @@ public class HelpMenuHandler implements InputHandler {
 
 		Message message = update.getMessage();
 		String chatId = message.getChatId().toString();
-		String answer = messagesService.getReplyText("reply.showHelpMenu");
+		String answer = messagesService.getReplyText("reply.showHelpMenu", Emojis.SCREAM);
 		return mainMenuService.getMainMenuMessage(chatId, answer);
 	}
 
