@@ -1,17 +1,13 @@
 package com.example.telegram_bot.cache;
 
 import com.example.telegram_bot.botapi.BotState;
-import com.example.telegram_bot.botapi.handlers.message.fillingprofile.UserProfileData;
+import com.example.telegram_bot.model.UserProfileData;
 
 public interface DataCache {
 
 	void setUsersCurrentBotState(String userId, BotState botState);
 
 	BotState getUsersCurrentBotState(String userId);
-
-	BotState getUsersCurrentBotStateForMessage(String userId);
-
-	BotState getUsersCurrentBotStateForCallback(String userId);
 
 	UserProfileData getUserProfileData(String userId);
 

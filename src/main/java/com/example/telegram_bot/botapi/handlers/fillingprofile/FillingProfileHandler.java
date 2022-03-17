@@ -1,8 +1,9 @@
-package com.example.telegram_bot.botapi.handlers.message.fillingprofile;
+package com.example.telegram_bot.botapi.handlers.fillingprofile;
 
 import com.example.telegram_bot.botapi.BotState;
 import com.example.telegram_bot.botapi.InputHandler;
 import com.example.telegram_bot.cache.UserDataCache;
+import com.example.telegram_bot.model.UserProfileData;
 import com.example.telegram_bot.service.ReplyMessagesService;
 import com.example.telegram_bot.utils.KeyboardBuilder;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -25,12 +27,24 @@ public class FillingProfileHandler implements InputHandler {
 	public BotApiMethod<?> handle(Update update) {
 		log.trace("Call {}", getHandlerName());
 
-		Message message = update.getMessage();
-		String id = message.getFrom().getId().toString();
-		if (userDataCache.getUsersCurrentBotState(id).equals(BotState.FILLING_PROFILE)) {
-			userDataCache.setUsersCurrentBotState(id, BotState.ASK_NAME);
+		if (update.hasCallbackQuery()) {
+			CallbackQuery callbackQuery = update.getCallbackQuery();
+			String id = callbackQuery.getFrom().getId().toString();
+			if (userDataCache.getUsersCurrentBotState(id).equals(BotState.FILLING_PROFILE)) {
+				userDataCache.setUsersCurrentBotState(id, BotState.ASK_NAME);
+			}
+			return processUsersInputCallback(callbackQuery);
+		} else if (update.hasMessage()) {
+			Message message = update.getMessage();
+			String id = message.getFrom().getId().toString();
+			if (userDataCache.getUsersCurrentBotState(id).equals(BotState.FILLING_PROFILE)) {
+				userDataCache.setUsersCurrentBotState(id, BotState.ASK_NAME);
+			}
+			return processUsersInputMessage(message);
 		}
-		return processUsersInput(message);
+
+		log.error("Unidentified update: " + update);
+		return null;
 	}
 
 	@Override
@@ -38,7 +52,7 @@ public class FillingProfileHandler implements InputHandler {
 		return BotState.FILLING_PROFILE;
 	}
 
-	private SendMessage processUsersInput(Message inputMsg) {
+	private SendMessage processUsersInputMessage(Message inputMsg) {
 		String usersAnswer = inputMsg.getText();
 		String userId = inputMsg.getFrom().getId().toString();
 		String chatId = inputMsg.getChatId().toString();
@@ -111,5 +125,32 @@ public class FillingProfileHandler implements InputHandler {
 		return replyToUser;
 	}
 
+	private BotApiMethod<?> processUsersInputCallback(CallbackQuery callbackQuery) {
+		String userId = callbackQuery.getFrom().getId().toString();
+		String chatId = callbackQuery.getMessage().getChatId().toString();
 
+		UserProfileData profileData = userDataCache.getUserProfileData(userId);
+		BotState botState = userDataCache.getUsersCurrentBotState(userId);
+
+		SendMessage replyToUser = messagesService.getReplyMessage(chatId, "error.unknown");
+
+		if (botState.equals(BotState.ASK_NAME)) {
+			replyToUser = messagesService.getReplyMessage(chatId, "reply.askName");
+			userDataCache.setUsersCurrentBotState(userId, BotState.ASK_AGE);
+		}
+
+		if (botState.equals(BotState.GENDER_M)) {
+			profileData.setGender("M");
+			userDataCache.saveUserProfileData(userId, profileData);
+			replyToUser = messagesService.getReplyMessage(chatId, "reply.askNumber");
+			userDataCache.setUsersCurrentBotState(userId, BotState.ASK_COLOR);
+		}
+		if (botState.equals(BotState.GENDER_W)) {
+			profileData.setGender("W");
+			userDataCache.saveUserProfileData(userId, profileData);
+			replyToUser = messagesService.getReplyMessage(chatId, "reply.askNumber");
+			userDataCache.setUsersCurrentBotState(userId, BotState.ASK_COLOR);
+		}
+		return replyToUser;
+	}
 }

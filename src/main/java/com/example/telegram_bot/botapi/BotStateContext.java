@@ -25,7 +25,6 @@ public class BotStateContext {
 
 	private InputHandler findMessageHandler(BotState currentState) {
 		if (isFillingProfileState(currentState)) return messageHandlers.get(BotState.FILLING_PROFILE);
-		if (isFilingProfileCallback(currentState)) return messageHandlers.get(BotState.FILLING_PROFILE_CALLBACK);
 		return messageHandlers.get(currentState);
 	}
 
@@ -39,6 +38,8 @@ public class BotStateContext {
 			case ASK_MOVIE:
 			case ASK_SONG:
 			case ASK_COLOR:
+			case GENDER_M:
+			case GENDER_W:
 			case FILLING_PROFILE:
 			case PROFILE_FILLED:
 				return true;
@@ -47,14 +48,4 @@ public class BotStateContext {
 		}
 	}
 
-	private boolean isFilingProfileCallback(BotState currentState) {
-		switch (currentState) {
-			case GENDER_M:
-			case GENDER_W:
-			case FILLING_PROFILE_CALLBACK:
-				return true;
-			default:
-				return false;
-		}
-	}
 }

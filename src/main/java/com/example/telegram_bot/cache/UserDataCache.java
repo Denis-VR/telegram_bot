@@ -1,8 +1,7 @@
 package com.example.telegram_bot.cache;
 
 import com.example.telegram_bot.botapi.BotState;
-import com.example.telegram_bot.botapi.BotType;
-import com.example.telegram_bot.botapi.handlers.message.fillingprofile.UserProfileData;
+import com.example.telegram_bot.model.UserProfileData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -18,60 +17,25 @@ public class UserDataCache implements DataCache {
 
 	@Override
 	public void setUsersCurrentBotState(String userId, BotState botState) {
-		log.trace("User with id = {} set botstate: {}", userId, botState);
-		userBotStates.put(userId, botState);
+		if (!botState.equals(BotState.WRONG_HANDLE_TYPE)
+				&& !botState.equals(BotState.NOT_SUPPORT)
+				&& !botState.equals(BotState.SHOW_MAIN_MENU)
+				&& !botState.equals(BotState.NOT_ASK)
+				&& !botState.equals(BotState.SHOW_HELP_MENU)
+				&& !botState.equals(BotState.SHOW_USER_PROFILE)) {
+
+			log.trace("User with id = {} set botstate: {}", userId, botState);
+			userBotStates.put(userId, botState);
+		}
 	}
 
 	@Override
-	@Deprecated //Может вызывать ошибку!
 	public BotState getUsersCurrentBotState(String userId) {
 		BotState botState = userBotStates.get(userId);
 		if (botState == null) {
 			botState = BotState.ASK_DESTINY;
 		}
 		return botState;
-	}
-
-	@Override
-	public BotState getUsersCurrentBotStateForMessage(String userId) {
-		BotState botState = userBotStates.get(userId);
-		if (botState == null) {
-			botState = BotState.ASK_DESTINY;
-		} else if (!isMessage(botState)) {
-			log.warn("getUsersCurrentBotStateForMessage() did not find state: {} for Message", botState);
-			if (isCallback(botState)) {
-				botState = BotState.IS_CALLBACK_QUERY;
-			} else {
-				log.error("There is no handler for state: {}", botState);
-				return null; //todo throw exception (need global ExceptionHandler)
-			}
-		}
-		return botState;
-	}
-
-	@Override
-	public BotState getUsersCurrentBotStateForCallback(String userId) {
-		BotState botState = userBotStates.get(userId);
-		if (botState == null) {
-			botState = BotState.ASK_DESTINY;
-		} else if (!isCallback(botState)) {
-			log.warn("getUsersCurrentBotStateForCakkback() did not find state: {} for Callback", botState);
-			if (isMessage(botState)) {
-				botState = BotState.IS_MESSAGE;
-			} else {
-				log.error("There is no handler for state: {}", botState);
-				return null; //todo throw exception (need global ExceptionHandler)
-			}
-		}
-		return botState;
-	}
-
-	private boolean isMessage(BotState botState) {
-		return botState.getBotType().equals(BotType.MESSAGE) || botState.getBotType().equals(BotType.MESSAGE_AND_CALLBACK);
-	}
-
-	private boolean isCallback(BotState botState) {
-		return botState.getBotType().equals(BotType.CALLBACK_QUERY) || botState.getBotType().equals(BotType.MESSAGE_AND_CALLBACK);
 	}
 
 	@Override

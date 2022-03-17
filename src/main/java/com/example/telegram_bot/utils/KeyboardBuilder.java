@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
-//todo компонент не готов, не продуман и не использует паттерн
+//todo компонент не готов, не продуман и не соответсвует паттерну
 public class KeyboardBuilder {
 
 	public static InlineKeyboardButton buildButton(String name, String buttonName) {
@@ -47,6 +47,23 @@ public class KeyboardBuilder {
 		List<InlineKeyboardButton> keyboardButtonRow1 = buildKeyboardButtonRow(buttonMan, buttonWoman);
 
 		List<List<InlineKeyboardButton>> rowList = buildRowList(keyboardButtonRow1);
+
+		inlineMarkup.setKeyboard(rowList);
+		return inlineMarkup;
+	}
+
+	public InlineKeyboardMarkup getInlineMessageButtons() {
+		InlineKeyboardMarkup inlineMarkup = new InlineKeyboardMarkup();
+		//todo сделать перевод для языков
+		InlineKeyboardButton buttonYes = buildButton("Да", "buttonYes");
+		InlineKeyboardButton buttonNo = buildButton("Нет", "buttonNo");
+		InlineKeyboardButton buttonThink = buildButton("Я подумаю", "buttonIwillThink");
+		InlineKeyboardButton buttonOther = buildButton("Другое", "buttonOther");
+
+		List<InlineKeyboardButton> keyboardButtonRow1 = buildKeyboardButtonRow(buttonYes, buttonNo);
+		List<InlineKeyboardButton> keyboardButtonRow2 = buildKeyboardButtonRow(buttonThink, buttonOther);
+
+		List<List<InlineKeyboardButton>> rowList = buildRowList(keyboardButtonRow1, keyboardButtonRow2);
 
 		inlineMarkup.setKeyboard(rowList);
 		return inlineMarkup;

@@ -1,4 +1,4 @@
-package com.example.telegram_bot.botapi.handlers.callback_query.menu;
+package com.example.telegram_bot.botapi.handlers.menu;
 
 import com.example.telegram_bot.botapi.BotState;
 import com.example.telegram_bot.botapi.InputHandler;

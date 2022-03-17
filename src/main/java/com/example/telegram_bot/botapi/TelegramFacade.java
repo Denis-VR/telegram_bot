@@ -27,45 +27,28 @@ public class TelegramFacade {
 	}
 
 	public BotApiMethod<?> handleUpdate(Update update) {
-		if (update.hasCallbackQuery()) {
-			return processCallbackQuery(update);
-		}
 		if (update.hasMessage()) {
-			return handleMessage(update);
+			Message message = update.getMessage();
+			if (message.hasText()) {
+				log.info("New message from User: {}, chatId: {}, with text: {}", message.getFrom().getUserName(), message.getChatId(), message.getText());
+				String userId = message.getFrom().getId().toString();
+				BotState botState = getBotStateTextMessage(message.getText(), userId, message.getChatId().toString());
+				userDataCache.setUsersCurrentBotState(userId, botState);
+				return botStateContext.processInputTextMessage(botState, update);
+			} else {
+				log.info("Non-text message received! Message: {}", message);
+				return replyMessagesService.getReplyMessage(message.getChatId().toString(), "error.notText");
+			}
+		} else if (update.hasCallbackQuery()) {
+			String userId = update.getCallbackQuery().getFrom().getId().toString();
+			log.info("New CallbackQuery from User: {}, userId:{}", update.getCallbackQuery().getFrom().getUserName(), userId);
+			BotState botState = getBotStateCallbackQueryData(update.getCallbackQuery().getData(), userId);
+			userDataCache.setUsersCurrentBotState(userId, botState);
+			return botStateContext.processInputTextMessage(botState, update);
 		}
 
 		log.error("Unknown update: {}", update);
 		return null;
-	}
-
-	private BotApiMethod<?> handleMessage(Update update) {
-		Message message = update.getMessage();
-		if (message.hasText()) {
-			log.info("New message from User: {}, chatId: {}, with text: {}", message.getFrom().getUserName(), message.getChatId(), message.getText());
-			return processMessage(update);
-		} else {
-			log.info("Non-text message received! Message: {}", message);
-			return replyMessagesService.getReplyMessage(message.getChatId().toString(), "error.notText");
-		}
-	}
-
-	private BotApiMethod<?> processMessage(Update update) {
-		String userId = update.getMessage().getFrom().getId().toString();
-		BotState botState = getBotStateTextMessage(update.getMessage().getText(), userId, update.getMessage().getChatId().toString());
-		if (!botState.equals(BotState.IS_CALLBACK_QUERY)) {
-			userDataCache.setUsersCurrentBotState(userId, botState);
-		}
-		return botStateContext.processInputTextMessage(botState, update);
-	}
-
-	private BotApiMethod<?> processCallbackQuery(Update update) {
-		String userId = update.getCallbackQuery().getFrom().getId().toString();
-		log.info("New CallbackQuery from User: {}, userId:{}", update.getCallbackQuery().getFrom().getUserName(), userId);
-		BotState botState = getBotStateCallbackQueryData(update.getCallbackQuery().getData(), userId);
-		if (!botState.equals(BotState.IS_MESSAGE) && !botState.equals(BotState.NOT_SUPPORT)) {
-			userDataCache.setUsersCurrentBotState(userId, botState);
-		}
-		return botStateContext.processInputTextMessage(botState, update);
 	}
 
 	private BotState getBotStateTextMessage(String textMessage, String userId, String chatId) {
@@ -85,7 +68,7 @@ public class TelegramFacade {
 				botState = BotState.SHOW_HELP_MENU;
 				break;
 			default:
-				botState = userDataCache.getUsersCurrentBotStateForMessage(userId);
+				botState = userDataCache.getUsersCurrentBotState(userId);
 		}
 		return botState;
 	}
@@ -94,7 +77,7 @@ public class TelegramFacade {
 		BotState botState;
 		switch (data) {
 			case "buttonYes":
-				botState = BotState.FILLING_PROFILE_CALLBACK;
+				botState = BotState.FILLING_PROFILE;
 				break;
 			case "buttonNo":
 				botState = BotState.NOT_ASK;
@@ -112,7 +95,7 @@ public class TelegramFacade {
 				botState = BotState.SHOW_MAIN_MENU;
 				break;
 			default:
-				botState = userDataCache.getUsersCurrentBotStateForCallback(userId);
+				botState = userDataCache.getUsersCurrentBotState(userId);
 		}
 		return botState;
 	}

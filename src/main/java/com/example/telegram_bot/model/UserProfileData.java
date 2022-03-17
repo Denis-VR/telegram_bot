@@ -1,12 +1,14 @@
-package com.example.telegram_bot.botapi.handlers.message.fillingprofile;
+package com.example.telegram_bot.model;
 
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+import java.io.Serializable;
+
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserProfileData {
+public class UserProfileData implements Serializable {
 
 	String name;
 	String gender;
