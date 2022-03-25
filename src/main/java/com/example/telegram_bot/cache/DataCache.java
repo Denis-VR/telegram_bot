@@ -1,6 +1,6 @@
 package com.example.telegram_bot.cache;
 
-import com.example.telegram_bot.botapi.BotState;
+import com.example.telegram_bot.enums.BotState;
 import com.example.telegram_bot.model.UserProfileData;
 
 public interface DataCache {

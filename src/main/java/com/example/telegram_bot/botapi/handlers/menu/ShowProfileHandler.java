@@ -1,7 +1,7 @@
 package com.example.telegram_bot.botapi.handlers.menu;
 
-import com.example.telegram_bot.botapi.BotState;
-import com.example.telegram_bot.botapi.InputHandler;
+import com.example.telegram_bot.enums.BotState;
+import com.example.telegram_bot.botapi.handlers.InputHandler;
 import com.example.telegram_bot.cache.UserDataCache;
 import com.example.telegram_bot.model.UserProfileData;
 import lombok.RequiredArgsConstructor;

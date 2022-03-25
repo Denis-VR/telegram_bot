@@ -1,6 +1,6 @@
 package com.example.telegram_bot.cache;
 
-import com.example.telegram_bot.botapi.BotState;
+import com.example.telegram_bot.enums.BotState;
 import com.example.telegram_bot.model.UserProfileData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -22,7 +22,8 @@ public class UserDataCache implements DataCache {
 				&& !botState.equals(BotState.SHOW_MAIN_MENU)
 				&& !botState.equals(BotState.NOT_ASK)
 				&& !botState.equals(BotState.SHOW_HELP_MENU)
-				&& !botState.equals(BotState.SHOW_USER_PROFILE)) {
+				&& !botState.equals(BotState.SHOW_USER_PROFILE)
+				&& !botState.equals(BotState.IGNORE)) {
 
 			log.trace("User with id = {} set botstate: {}", userId, botState);
 			userBotStates.put(userId, botState);

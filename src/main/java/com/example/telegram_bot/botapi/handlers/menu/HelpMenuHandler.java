@@ -1,10 +1,10 @@
 package com.example.telegram_bot.botapi.handlers.menu;
 
-import com.example.telegram_bot.botapi.BotState;
-import com.example.telegram_bot.botapi.InputHandler;
+import com.example.telegram_bot.enums.BotState;
+import com.example.telegram_bot.botapi.handlers.InputHandler;
 import com.example.telegram_bot.service.MainMenuService;
 import com.example.telegram_bot.service.ReplyMessagesService;
-import com.example.telegram_bot.utils.Emojis;
+import com.example.telegram_bot.enums.Emojis;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

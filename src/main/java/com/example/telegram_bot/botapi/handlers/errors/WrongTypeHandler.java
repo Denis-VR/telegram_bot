@@ -1,7 +1,7 @@
 package com.example.telegram_bot.botapi.handlers.errors;
 
-import com.example.telegram_bot.botapi.BotState;
-import com.example.telegram_bot.botapi.InputHandler;
+import com.example.telegram_bot.enums.BotState;
+import com.example.telegram_bot.botapi.handlers.InputHandler;
 import com.example.telegram_bot.service.ReplyMessagesService;
 import com.example.telegram_bot.utils.KeyboardBuilder;
 import lombok.RequiredArgsConstructor;

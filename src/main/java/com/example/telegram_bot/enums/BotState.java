@@ -1,4 +1,4 @@
-package com.example.telegram_bot.botapi;
+package com.example.telegram_bot.enums;
 
 public enum BotState {
 
@@ -27,6 +27,7 @@ public enum BotState {
 	//errors
 	NOT_SUPPORT,
 	NOT_ASK,
+	IGNORE,
 	WRONG_HANDLE_TYPE;
 
 }

@@ -20,12 +20,12 @@ public class UserProfileData implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Имя = '" + name + '\'' +
-				", Пол = '" + gender + '\'' +
-				", Цвет = '" + color + '\'' +
-				", Фильм = '" + movie + '\'' +
-				", Песня = '" + song + '\'' +
-				", Возвраст = " + age +
-				", Номер = " + number;
+		return "Имя = '" + name + "'\n" +
+				"Пол = '" + gender + "'\n" +
+				"Цвет = '" + color + "'\n" +
+				"Фильм = '" + movie + "'\n" +
+				"Песня = '" + song + "'\n" +
+				"Возвраст = " + age + "'\n" +
+				"Номер = " + number;
 	}
 }

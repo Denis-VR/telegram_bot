@@ -2,13 +2,21 @@ package com.example.telegram_bot.botapi;
 
 import com.example.telegram_bot.MyTelegramBot;
 import com.example.telegram_bot.cache.UserDataCache;
+import com.example.telegram_bot.enums.BotState;
+import com.example.telegram_bot.model.UserProfileData;
 import com.example.telegram_bot.service.ReplyMessagesService;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ResourceUtils;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 
 @Component
 @Slf4j
@@ -42,7 +50,7 @@ public class TelegramFacade {
 		} else if (update.hasCallbackQuery()) {
 			String userId = update.getCallbackQuery().getFrom().getId().toString();
 			log.info("New CallbackQuery from User: {}, userId:{}", update.getCallbackQuery().getFrom().getUserName(), userId);
-			BotState botState = getBotStateCallbackQueryData(update.getCallbackQuery().getData(), userId);
+			BotState botState = getBotStateCallbackQueryData(update.getCallbackQuery().getData(), userId, update.getCallbackQuery().getFrom().getId().toString());
 			userDataCache.setUsersCurrentBotState(userId, botState);
 			return botStateContext.processInputTextMessage(botState, update);
 		}
@@ -67,13 +75,17 @@ public class TelegramFacade {
 			case "Помощь":
 				botState = BotState.SHOW_HELP_MENU;
 				break;
+			case "Скачать анкету":
+				myTelegramBot.sendDocument(chatId, replyMessagesService.getReplyText("reply.getProfile"), getUsersProfile(userId));
+				botState = BotState.IGNORE;
+				break;
 			default:
 				botState = userDataCache.getUsersCurrentBotState(userId);
 		}
 		return botState;
 	}
 
-	private BotState getBotStateCallbackQueryData(String data, String userId) {
+	private BotState getBotStateCallbackQueryData(String data, String userId, String chatId) {
 		BotState botState;
 		switch (data) {
 			case "buttonYes":
@@ -98,5 +110,17 @@ public class TelegramFacade {
 				botState = userDataCache.getUsersCurrentBotState(userId);
 		}
 		return botState;
+	}
+
+	@SneakyThrows
+	private File getUsersProfile(String userId) {
+		UserProfileData userProfileData = userDataCache.getUserProfileData(userId);
+		File profileFile = ResourceUtils.getFile("classpath:static/docs/users_profile.txt");
+
+		try (FileWriter fw = new FileWriter(profileFile.getAbsoluteFile());
+			 BufferedWriter bw = new BufferedWriter(fw)) {
+			bw.write(userProfileData.toString());
+		}
+		return profileFile;
 	}
 }

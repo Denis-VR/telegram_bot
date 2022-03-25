@@ -1,7 +1,7 @@
 package com.example.telegram_bot.botapi.handlers.fillingprofile;
 
-import com.example.telegram_bot.botapi.BotState;
-import com.example.telegram_bot.botapi.InputHandler;
+import com.example.telegram_bot.enums.BotState;
+import com.example.telegram_bot.botapi.handlers.InputHandler;
 import com.example.telegram_bot.cache.UserDataCache;
 import com.example.telegram_bot.model.UserProfileData;
 import com.example.telegram_bot.service.ReplyMessagesService;
@@ -119,6 +119,7 @@ public class FillingProfileHandler implements InputHandler {
 			profileData.setSong(usersAnswer);
 			userDataCache.setUsersCurrentBotState(userId, BotState.ASK_DESTINY);
 			replyToUser = messagesService.getReplyMessage(chatId, "reply.profileFilled");
+			replyToUser.setParseMode("HTML");
 		}
 
 		userDataCache.saveUserProfileData(userId, profileData);
